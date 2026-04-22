@@ -1,0 +1,531 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% if profile %}{{ profile.name }} — Portfolio{% else %}Portfolio{% endif %}</title>
+  <meta name="description" content="{% if profile %}{{ profile.tagline }}{% else %}Personal Portfolio{% endif %}" />
+  <meta name="author"      content="{% if profile %}{{ profile.name }}{% endif %}" />
+  <meta property="og:title" content="{% if profile %}{{ profile.name }} — Portfolio{% else %}Portfolio{% endif %}" />
+  <meta property="og:type"  content="website" />
+  {% if profile and profile.profile_image %}<meta property="og:image" content="{{ profile.profile_image.url }}" />{% endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon"    href="{% static 'favicon.ico' %}" />
+  <link rel="icon" type="image/svg+xml"   href="{% static 'favicon.svg' %}" />
+  <link rel="shortcut icon"                href="{% static 'favicon.ico' %}" />
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="80">
+
+<!-- ══ LOADER ══════════════════════════════════════════════════════ -->
+<div id="loader" class="loader-overlay">
+  <div class="loader-inner">
+    <div class="loader-ring"></div>
+    <div class="loader-ring loader-ring--2"></div>
+    <div class="loader-ring loader-ring--3"></div>
+    <p class="loader-text">{% if profile %}{{ profile.name|truncatechars:14 }}{% else %}Loading…{% endif %}</p>
+  </div>
+</div>
+
+<!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+<nav id="mainNav" class="navbar navbar-expand-lg fixed-top glass-nav">
+  <div class="container">
+    <a class="navbar-brand brand-logo" href="#hero">
+      {% if profile %}<span class="brand-initials">{{ profile.name|first }}</span>{{ profile.name }}{% else %}Portfolio{% endif %}
+    </a>
+    <button class="navbar-toggler glass-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="toggler-icon"><span></span><span></span><span></span></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+        {% if profile and profile.show_certificates %}<li class="nav-item"><a class="nav-link" href="#certificates">Certificates</a></li>{% endif %}
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        {% if profile and profile.resume_file %}
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-glow btn-sm px-3" href="{{ profile.resume_file.url }}" target="_blank" rel="noopener">
+            <i class="bi bi-file-earmark-person me-1"></i>Resume
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ════════════════════════════════════════════════════════ -->
+<section id="hero" class="hero-section d-flex align-items-center">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="mesh-grid"></div>
+
+  <div class="container hero-content">
+    <div class="row align-items-center gy-5">
+
+      <!-- Text col -->
+      <div class="col-lg-7 order-2 order-lg-1">
+        <div class="hero-text-wrap">
+          <span class="hero-badge animate-in" style="--delay:.1s">
+            <span class="badge-dot"></span>Available for work
+          </span>
+
+          <h1 class="hero-title animate-in" style="--delay:.2s">
+            {% if profile %}Hi, I'm<br><span class="gradient-text">{{ profile.name }}</span>
+            {% else %}Hi, I'm a<br><span class="gradient-text">Developer</span>{% endif %}
+          </h1>
+
+          <p class="hero-tagline animate-in" style="--delay:.35s">
+            {% if profile %}{{ profile.tagline }}{% else %}Building beautiful things for the web{% endif %}
+          </p>
+
+          <!-- Stats -->
+          <div class="hero-stats animate-in" style="--delay:.45s">
+            {% if profile %}
+              {% if profile.years_experience %}<div class="stat-pill"><strong>{{ profile.years_experience }}+</strong><span>Years Exp.</span></div>{% endif %}
+              {% if profile.projects_completed %}<div class="stat-pill"><strong>{{ profile.projects_completed }}+</strong><span>Projects</span></div>{% endif %}
+              {% if profile.clients_served %}<div class="stat-pill"><strong>{{ profile.clients_served }}+</strong><span>Clients</span></div>{% endif %}
+            {% endif %}
+          </div>
+
+          <!-- CTA buttons -->
+          <div class="hero-actions animate-in" style="--delay:.55s">
+            <a href="#projects" class="btn btn-glow me-2 mb-2">
+              <i class="bi bi-grid-3x3-gap me-2"></i>View Projects
+            </a>
+            <a href="#contact" class="btn btn-glass mb-2 me-2">
+              <i class="bi bi-chat-dots me-2"></i>Get in Touch
+            </a>
+            {% if profile and profile.resume_file %}
+            <a href="{{ profile.resume_file.url }}" target="_blank" rel="noopener" class="btn btn-resume mb-2">
+              <i class="bi bi-file-earmark-person me-2"></i>View Resume
+            </a>
+            {% endif %}
+          </div>
+
+          <!-- Social icons -->
+          <div class="hero-social animate-in" style="--delay:.65s">
+            {% if profile %}
+              {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="GitHub"><i class="bi bi-github"></i></a>{% endif %}
+              {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="LinkedIn"><i class="bi bi-linkedin"></i></a>{% endif %}
+              {% if profile.instagram_username %}<a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="social-icon-btn insta-btn" title="Instagram"><i class="bi bi-instagram"></i></a>{% endif %}
+              {% if profile.email %}<a href="{{ profile.mailto_url }}" class="social-icon-btn" title="Email"><i class="bi bi-envelope"></i></a>{% endif %}
+              {% if profile.phone %}<a href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>{% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo col -->
+      <div class="col-lg-5 order-1 order-lg-2 text-center">
+        <div class="hero-image-wrap animate-in" style="--delay:.25s">
+          <div class="profile-frame"{% if profile and profile.profile_bg_color %} style="--profile-bg:{{ profile.profile_bg_color }}"{% endif %}>
+            <div class="profile-frame-inner">
+              {% if hero_photo %}
+              <img src="{{ hero_photo.photo.url }}" alt="{{ profile.name }}" class="profile-img" />
+              {% elif profile and profile.profile_image %}
+              <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}" class="profile-img" />
+              {% else %}
+              <div class="profile-img-placeholder"><i class="bi bi-person-fill"></i></div>
+              {% endif %}
+            </div>
+            <div class="profile-frame-glow"></div>
+          </div>
+          <!-- Floating chips -->
+          <div class="floating-chip chip-1"><i class="devicon-python-plain colored"></i> Python</div>
+          <div class="floating-chip chip-2"><i class="devicon-react-original colored"></i> React</div>
+          <div class="floating-chip chip-3"><i class="devicon-django-plain colored"></i> Django</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="#about" class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"><div class="scroll-dot"></div></div>
+  </a>
+</section>
+
+<!-- ══ ABOUT ═══════════════════════════════════════════════════════ -->
+<section id="about" class="section about-section">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-label">Get to know me</span>
+      <h2 class="section-title">About <span class="gradient-text">Me</span></h2>
+    </div>
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-5 text-center">
+        <div class="about-img-wrap reveal-left">
+          {% if about_photo %}
+          <img src="{{ about_photo.photo.url }}" alt="{{ profile.name }}" class="about-img" />
+          {% elif profile and profile.profile_image %}
+          <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}" class="about-img" />
+          {% else %}
+          <div class="about-img-placeholder"><i class="bi bi-person-fill"></i></div>
+          {% endif %}
+          <div class="about-img-badge glass-card">
+            <i class="bi bi-patch-check-fill text-accent"></i>
+            <span>Open to Opportunities</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7 reveal-right">
+        {% if profile %}
+        <p class="about-bio">{{ profile.bio|linebreaksbr }}</p>
+        <div class="row g-3 mb-4">
+          {% if profile.location %}<div class="col-sm-6"><div class="detail-item glass-card"><i class="bi bi-geo-alt-fill text-accent"></i><div><small>Location</small><strong>{{ profile.location }}</strong></div></div></div>{% endif %}
+          {% if profile.email %}<div class="col-sm-6"><div class="detail-item glass-card"><i class="bi bi-envelope-fill text-accent"></i><div><small>Email</small><strong>{{ profile.email }}</strong></div></div></div>{% endif %}
+          {% if profile.phone %}<div class="col-sm-6"><div class="detail-item glass-card"><i class="bi bi-telephone-fill text-accent"></i><div><small>Phone</small><strong>{{ profile.phone }}</strong></div></div></div>{% endif %}
+          {% if profile.instagram_username %}<div class="col-sm-6"><a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="detail-item glass-card text-decoration-none"><i class="bi bi-instagram" style="color:#e1306c;"></i><div><small>Instagram</small><strong>@{{ profile.instagram_username }}</strong></div></a></div>{% endif %}
+        </div>
+        {% else %}
+        <p class="about-bio">Add your profile information via the Django admin panel.</p>
+        {% endif %}
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="#contact" class="btn btn-glow">Let's Talk <i class="bi bi-arrow-right ms-1"></i></a>
+          {% if profile and profile.resume_file %}
+          <a href="{{ profile.resume_file.url }}" target="_blank" rel="noopener" class="btn btn-resume">
+            <i class="bi bi-file-earmark-person me-1"></i>View Resume
+          </a>
+          <a href="{{ profile.resume_file.url }}" download class="btn btn-glass">
+            <i class="bi bi-download me-1"></i>Download
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SKILLS ══════════════════════════════════════════════════════ -->
+<section id="skills" class="section skills-section">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-label">What I work with</span>
+      <h2 class="section-title">My <span class="gradient-text">Skills</span></h2>
+    </div>
+
+    {% if skill_categories %}
+      {% for category in skill_categories %}{% if category.skills.all %}
+      <div class="skill-group mb-5">
+        <div class="skill-category-header">
+          <span class="skill-category-name">{{ category.name }}</span>
+          <div class="skill-category-line"></div>
+        </div>
+        <div class="row g-4">
+          {% for skill in category.skills.all %}{% if skill.is_featured %}
+          <div class="col-md-6 col-xl-4 reveal-up" style="--i:{{ forloop.counter }}">
+            <div class="skill-card-v2 glass-card">
+              <div class="skill-card-v2-top">
+                <div class="skill-icon-wrap">
+                  {% if skill.icon_class != 'custom' %}
+                  <i class="{{ skill.icon_class }} colored"></i>
+                  {% else %}
+                  <span class="skill-letter">{{ skill.name|first|upper }}</span>
+                  {% endif %}
+                </div>
+                <div class="skill-info">
+                  <span class="skill-name-v2">{{ skill.name }}</span>
+                  <span class="skill-level-label">
+                    {% if skill.proficiency >= 90 %}Expert
+                    {% elif skill.proficiency >= 75 %}Advanced
+                    {% elif skill.proficiency >= 55 %}Intermediate
+                    {% else %}Beginner{% endif %}
+                  </span>
+                </div>
+                <span class="skill-pct-v2">{{ skill.proficiency }}%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" data-width="{{ skill.proficiency }}"
+                     style="--skill-color: {% if skill.proficiency >= 80 %}var(--accent){% elif skill.proficiency >= 55 %}var(--accent-2){% else %}var(--accent-3){% endif %};">
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+      {% endif %}{% endfor %}
+    {% endif %}
+
+    {% if uncategorised_skills %}
+    <div class="skill-group mb-5">
+      {% if skill_categories %}
+      <div class="skill-category-header"><span class="skill-category-name">Other Skills</span><div class="skill-category-line"></div></div>
+      {% endif %}
+      <div class="row g-4">
+        {% for skill in uncategorised_skills %}
+        <div class="col-md-6 col-xl-4 reveal-up" style="--i:{{ forloop.counter }}">
+          <div class="skill-card-v2 glass-card">
+            <div class="skill-card-v2-top">
+              <div class="skill-icon-wrap">
+                {% if skill.icon_class != 'custom' %}<i class="{{ skill.icon_class }} colored"></i>
+                {% else %}<span class="skill-letter">{{ skill.name|first|upper }}</span>{% endif %}
+              </div>
+              <div class="skill-info">
+                <span class="skill-name-v2">{{ skill.name }}</span>
+                <span class="skill-level-label">
+                  {% if skill.proficiency >= 90 %}Expert
+                  {% elif skill.proficiency >= 75 %}Advanced
+                  {% elif skill.proficiency >= 55 %}Intermediate
+                  {% else %}Beginner{% endif %}
+                </span>
+              </div>
+              <span class="skill-pct-v2">{{ skill.proficiency }}%</span>
+            </div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" data-width="{{ skill.proficiency }}"
+                   style="--skill-color: {% if skill.proficiency >= 80 %}var(--accent){% elif skill.proficiency >= 55 %}var(--accent-2){% else %}var(--accent-3){% endif %};">
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if not skill_categories and not uncategorised_skills %}
+    <div class="text-center py-5">
+      <i class="bi bi-code-slash" style="font-size:3rem;opacity:.25"></i>
+      <p class="mt-3 text-muted">Add skills via the admin panel.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ══ PROJECTS ════════════════════════════════════════════════════ -->
+<section id="projects" class="section projects-section">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-label">What I've built</span>
+      <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
+    </div>
+    {% if projects %}
+    <div class="row g-4">
+      {% for project in projects %}
+      <div class="col-md-6 col-lg-4 reveal-up" style="--i:{{ forloop.counter }}">
+        <div class="project-card glass-card h-100">
+          <div class="project-img-wrap">
+            {% if project.image %}<img src="{{ project.image.url }}" alt="{{ project.title }}" class="project-img" loading="lazy" />
+            {% else %}<div class="project-img-placeholder"><i class="bi bi-window-desktop"></i></div>{% endif %}
+            <div class="project-overlay">
+              <div class="project-links">
+                {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank" rel="noopener" class="project-link-btn" title="GitHub"><i class="bi bi-github"></i></a>{% endif %}
+                {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener" class="project-link-btn" title="Live Demo"><i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
+              </div>
+            </div>
+            <span class="project-status-badge status-{{ project.status }}">{{ project.get_status_display }}</span>
+          </div>
+          <div class="project-body">
+            <h5 class="project-title">{{ project.title }}</h5>
+            <p class="project-desc">{{ project.short_description }}</p>
+            {% if project.tech_list %}<div class="project-tech-tags">{% for tech in project.tech_list %}<span class="tech-tag">{{ tech }}</span>{% endfor %}</div>{% endif %}
+          </div>
+          <div class="project-footer">
+            {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank" rel="noopener" class="project-footer-link"><i class="bi bi-github"></i> Source</a>{% endif %}
+            {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener" class="project-footer-link ms-auto">Live Demo <i class="bi bi-arrow-right"></i></a>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5"><i class="bi bi-folder2-open" style="font-size:3rem;opacity:.3"></i><p class="mt-3 text-muted">Add projects via the admin panel.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ══ CERTIFICATES ════════════════════════════════════════════════ -->
+{% if profile and profile.show_certificates %}
+<section id="certificates" class="section cert-section">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-label">My Credentials</span>
+      <h2 class="section-title">Certificates &amp; <span class="gradient-text">Achievements</span></h2>
+    </div>
+
+    {% if certificates %}
+    <div class="row g-4">
+      {% for cert in certificates %}
+      <div class="col-md-6 col-lg-4 reveal-up" style="--i:{{ forloop.counter }}">
+        <div class="cert-card glass-card h-100">
+
+          <!-- Badge / image -->
+          <div class="cert-img-wrap">
+            {% if cert.image %}
+            <img src="{{ cert.image.url }}" alt="{{ cert.title }}" class="cert-img" loading="lazy" />
+            {% else %}
+            <div class="cert-img-placeholder">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="cert-body">
+            <div class="cert-issuer-row">
+              <span class="cert-issuer">{{ cert.issuer }}</span>
+              <span class="cert-date">{{ cert.issue_date|date:"M Y" }}</span>
+            </div>
+            <h5 class="cert-title">{{ cert.title }}</h5>
+            {% if cert.description %}<p class="cert-desc">{{ cert.description }}</p>{% endif %}
+            {% if cert.credential_id %}
+            <p class="cert-id"><i class="bi bi-hash"></i> {{ cert.credential_id }}</p>
+            {% endif %}
+          </div>
+
+          {% if cert.credential_url or cert.expiry_date %}
+          <div class="cert-footer">
+            {% if cert.expiry_date %}
+            <span class="cert-expiry"><i class="bi bi-clock"></i> Expires {{ cert.expiry_date|date:"M Y" }}</span>
+            {% endif %}
+            {% if cert.credential_url %}
+            <a href="{{ cert.credential_url }}" target="_blank" rel="noopener" class="cert-verify-btn ms-auto">
+              Verify <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+            {% endif %}
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+      <i class="bi bi-award" style="font-size:3rem;opacity:.3"></i>
+      <p class="mt-3 text-muted">Add certificates via the admin panel.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- ══ CONTACT ═════════════════════════════════════════════════════ -->
+<section id="contact" class="section contact-section">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-label">Reach out</span>
+      <h2 class="section-title">Get In <span class="gradient-text">Touch</span></h2>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-8 col-xl-7">
+        <p class="contact-intro text-center mb-4">
+          Have a project in mind, want to collaborate, or just say hi? My inbox is always open.
+        </p>
+        {% if profile %}
+        <div class="row g-3">
+
+          {% if profile.email %}
+          <div class="col-sm-6">
+            <a href="{{ profile.mailto_url }}" class="contact-card glass-card h-100">
+              <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+              <div><small>Email — click to open</small><strong>{{ profile.email }}</strong></div>
+            </a>
+          </div>
+          {% endif %}
+
+          {% if profile.phone %}
+          <div class="col-sm-6">
+            <a href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener" class="contact-card glass-card h-100">
+              <div class="contact-icon whatsapp-icon"><i class="bi bi-whatsapp"></i></div>
+              <div><small>WhatsApp</small><strong>{{ profile.phone }}</strong></div>
+            </a>
+          </div>
+          {% endif %}
+
+          {% if profile.github_url %}
+          <div class="col-sm-6">
+            <a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="contact-card glass-card h-100">
+              <div class="contact-icon"><i class="bi bi-github"></i></div>
+              <div><small>GitHub</small><strong>View Repositories</strong></div>
+            </a>
+          </div>
+          {% endif %}
+
+          {% if profile.linkedin_url %}
+          <div class="col-sm-6">
+            <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="contact-card glass-card h-100">
+              <div class="contact-icon linkedin-icon"><i class="bi bi-linkedin"></i></div>
+              <div><small>LinkedIn</small><strong>View Profile</strong></div>
+            </a>
+          </div>
+          {% endif %}
+
+          {% if profile.instagram_username %}
+          <div class="col-sm-6">
+            <a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="contact-card glass-card h-100">
+              <div class="contact-icon insta-icon"><i class="bi bi-instagram"></i></div>
+              <div><small>Instagram</small><strong>@{{ profile.instagram_username }}</strong></div>
+            </a>
+          </div>
+          {% endif %}
+
+          {% if profile.location %}
+          <div class="col-sm-6">
+            <div class="contact-card glass-card h-100">
+              <div class="contact-icon"><i class="bi bi-geo-alt-fill"></i></div>
+              <div><small>Location</small><strong>{{ profile.location }}</strong></div>
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+
+        <!-- Social strip -->
+        <div class="contact-social-row mt-4 justify-content-center">
+          {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="GitHub"><i class="bi bi-github"></i></a>{% endif %}
+          {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="LinkedIn"><i class="bi bi-linkedin"></i></a>{% endif %}
+          {% if profile.instagram_username %}<a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="social-icon-btn insta-btn" title="Instagram"><i class="bi bi-instagram"></i></a>{% endif %}
+          {% if profile.email %}<a href="{{ profile.mailto_url }}" class="social-icon-btn" title="Email"><i class="bi bi-envelope"></i></a>{% endif %}
+          {% if profile.phone %}<a href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener" class="social-icon-btn" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container text-center">
+    <div class="footer-brand mb-2">
+      {% if profile %}<span class="gradient-text fw-bold">{{ profile.name }}</span>{% else %}Portfolio{% endif %}
+    </div>
+    <p class="footer-copy">
+      Crafted with <i class="bi bi-heart-fill text-accent"></i> using Django &amp; Bootstrap.
+      &copy; {% now "Y" %} {% if profile %}{{ profile.name }}{% endif %}. All rights reserved.
+    </p>
+    <div class="footer-social mt-3">
+      {% if profile %}
+        {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener" class="social-icon-btn sm"><i class="bi bi-github"></i></a>{% endif %}
+        {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener" class="social-icon-btn sm"><i class="bi bi-linkedin"></i></a>{% endif %}
+        {% if profile.instagram_username %}<a href="{{ profile.instagram_url }}" target="_blank" rel="noopener" class="social-icon-btn sm insta-btn" title="Instagram"><i class="bi bi-instagram"></i></a>{% endif %}
+        {% if profile.email %}<a href="{{ profile.mailto_url }}" class="social-icon-btn sm"><i class="bi bi-envelope"></i></a>{% endif %}
+        {% if profile.phone %}<a href="{{ profile.whatsapp_url }}" target="_blank" rel="noopener" class="social-icon-btn sm"><i class="bi bi-whatsapp"></i></a>{% endif %}
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" title="Back to top"><i class="bi bi-arrow-up"></i></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
